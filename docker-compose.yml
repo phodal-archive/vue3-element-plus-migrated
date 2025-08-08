@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Jaeger 追踪系统
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "4318:4318"    # OTLP HTTP 接收器
+      - "4317:4317"    # OTLP gRPC 接收器
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - COLLECTOR_OTLP_HTTP_ENABLED=true
+    networks:
+      - tracing-network
+    restart: unless-stopped
+
+  # 示例后端服务
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: tracing-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - JAEGER_ENDPOINT=http://jaeger:4318/v1/traces
+    depends_on:
+      - jaeger
+    networks:
+      - tracing-network
+    restart: unless-stopped
+
+  # Zipkin 追踪系统（可选）
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    environment:
+      - STORAGE_TYPE=memory
+    networks:
+      - tracing-network
+    restart: unless-stopped
+
+networks:
+  tracing-network:
+    driver: bridge
+
+volumes:
+  jaeger-data:

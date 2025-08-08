@@ -12,6 +12,9 @@ import './permission' // permission control
 import './utils/error-log' // error log
 import * as filters from './filters' // global filters
 
+// 初始化 OpenTelemetry 追踪
+import './utils/tracing'
+
 // If you don't want to use mock-server
 // you want to use MockJs for mock api
 // you can execute: mockXHR()

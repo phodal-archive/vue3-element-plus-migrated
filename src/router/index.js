@@ -94,6 +94,28 @@ export const constantRoutes = [
     ],
   },
   {
+    path: '/trace-debugger',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: Vue.defineAsyncComponent(
+          Vue.defineAsyncComponent(() => import('@/views/trace-debugger/index'))
+        ),
+        name: 'TraceDebugger',
+        meta: { title: '追踪调试器', icon: 'bug', noCache: true },
+      },
+      {
+        path: 'test',
+        component: Vue.defineAsyncComponent(
+          Vue.defineAsyncComponent(() => import('@/views/trace-debugger/test'))
+        ),
+        name: 'TraceTest',
+        meta: { title: '追踪测试', icon: 'test', noCache: true },
+      },
+    ],
+  },
+  {
     path: '/documentation',
     component: Layout,
     children: [
